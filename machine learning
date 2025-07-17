@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ANN using JAX and FLAX (guide #1)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg-gradient-start: #0a0c1c;
+            --bg-gradient-end: #1c213e;
+            --text-color: #c0c5d1;
+            --header-color: #ffffff;
+            --accent-color: #3b82f6;
+            --accent-light: #60a5fa;
+            --code-bg: #0d1117;
+            --code-color: #56d364;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --card-bg: rgba(255, 255, 255, 0.03);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            line-height: 1.7;
+            scroll-behavior: smooth;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1, h2, h3 {
+            color: var(--header-color);
+            font-weight: 700;
+            border-left: 4px solid var(--accent-color);
+            padding-left: 15px;
+            margin-top: 2em;
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            text-align: center;
+            border-left: none;
+            padding-left: 0;
+            background: -webkit-linear-gradient(45deg, var(--accent-light), var(--header-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5em;
+        }
+
+        h2 {
+            font-size: 2.2rem;
+            padding-bottom: 10px;
+        }
+        
+        h3 {
+            font-size: 1.6rem;
+            color: var(--accent-light);
+            border-left-width: 3px;
+        }
+
+        hr {
+            border: 0;
+            height: 1px;
+            background: var(--border-color);
+            margin: 60px 0;
+        }
+
+        p, li {
+            font-size: 1.1rem;
+        }
+
+        strong {
+            color: var(--accent-light);
+            font-weight: 500;
+        }
+        
+        .pre-section {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-left: 4px solid var(--accent-color);
+            padding: 15px 20px;
+            margin: 25px 0;
+            border-radius: 8px;
+        }
+        
+        .analogy {
+            background-color: rgba(59, 130, 246, 0.1);
+            border: 1px solid var(--border-color);
+            padding: 15px 20px;
+            margin: 25px 0;
+            border-radius: 8px;
+        }
+        .analogy strong {
+            color: var(--accent-light);
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .code-block {
+            background-color: var(--code-bg);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 25px 0;
+            overflow-x: auto;
+            box-shadow: 0 4px 25px rgba(0,0,0,0.3);
+            border: 1px solid var(--border-color);
+        }
+
+        .code-explanation {
+            margin-bottom: 15px;
+        }
+        .code-explanation p {
+            margin: 0;
+        }
+
+        pre {
+            margin: 0;
+        }
+
+        pre code {
+            color: var(--code-color);
+            font-family: 'Roboto Mono', monospace;
+            font-size: 1rem;
+            padding: 0;
+            background: none;
+        }
+        
+        .joke {
+            text-align: center;
+            font-size: 1.1rem;
+            padding: 25px;
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            margin-top: 40px;
+            border-top: 2px solid var(--accent-color);
+        }
+
+        .quiz {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 25px;
+            margin-top: 40px;
+            border-radius: 8px;
+        }
+        
+        .quiz h4 {
+            margin-top: 0;
+            font-size: 1.3rem;
+            color: var(--header-color);
+        }
+
+        .quiz button {
+            background-color: var(--accent-color);
+            color: var(--header-color);
+            border: none;
+            padding: 12px 22px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            font-weight: 500;
+        }
+
+        .quiz button:hover {
+            background-color: var(--accent-light);
+            transform: translateY(-2px);
+        }
+
+        .quiz .option {
+            margin: 12px 0;
+            display: block;
+        }
+        
+        .quiz-feedback {
+            margin-top: 15px;
+            font-weight: bold;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .quiz-feedback.correct {
+            color: #4ade80;
+            background-color: rgba(74, 222, 128, 0.1);
+        }
+        .quiz-feedback.incorrect {
+            color: #f87171;
+            background-color: rgba(248, 113, 113, 0.1);
+        }
+
+        .output-block {
+            background: #000;
+            color: #e0e0e0;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Roboto Mono', monospace;
+            white-space: pre-wrap;
+            margin-top: 15px;
+            border: 1px solid var(--border-color);
+        }
+
+        .simulation-container {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 25px 0;
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2rem; }
+            h2 { font-size: 1.8rem; }
+            h3 { font-size: 1.4rem; }
+            p, li { font-size: 1rem; }
+            .container { padding: 15px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🧠 ANN using JAX and FLAX (guide #1) 🌿</h1>
+    <p style="text-align: center; font-size: 1.2rem;">Your friendly guide to building powerful neural networks with the speed of JAX and the elegance of Flax.</p>
+
+    <hr>
+
+    <h2>Part 1: Foundations of Machine Learning</h2>
+
+    <h3>1. What is Machine Learning?</h3>
+    <p>Machine Learning (ML) is a way of teaching computers to find patterns. Instead of writing explicit, step-by-step instructions for every possibility, you give the computer data and let it figure out the rules on its own.</p>
+    
+    <div class="pre-section">
+        <strong>Key Term:</strong> Traditional Programming. This is classic coding where you write rigid rules: `if the user clicks this button, then open a new window`. The program only does exactly what you tell it.
+    </div>
+
+    <div class="analogy">
+        <strong>Analogy:</strong> Imagine teaching a child to recognize a cat.
+        <ul>
+            <li><strong>Traditional Programming:</strong> You'd write endless rules: "If it has pointy ears, AND whiskers, AND a long tail, AND fur... it might be a cat." This is brittle and fails easily (what about a cat with folded ears?).</li>
+            <li><strong>Machine Learning:</strong> You show the child hundreds of pictures of cats. The child's brain automatically learns the "features" of a cat. This is ML. You provide data (pictures and labels), and the computer learns the rules.</li>
+        </ul>
+    </div>
+
+    <ul>
+        <li><strong>Supervised Learning:</strong> This is the most common type. You give the model labeled data, like pictures of cats labeled "cat" and dogs labeled "dog". Its job is to learn the mapping from input (image) to output (label).</li>
+        <li><strong>Unsupervised Learning:</strong> You give the model unlabeled data (e.g., a pile of customer data) and ask it to find hidden structures, like grouping customers into different segments.</li>
+        <li><strong>Reinforcement Learning:</strong> The model (an "agent") learns by trial and error in an environment. It gets rewards for good actions and penalties for bad ones. Think of training a dog with treats.</li>
+    </ul>
+
+    <h3>2. Introduction to Neural Networks</h3>
+    <p>An Artificial Neural Network (ANN) is a type of ML model inspired by the human brain. It's made of interconnected "neurons" that process information.</p>
+    
+    <div class="pre-section">
+        <strong>Key Terms:</strong>
+        <ul>
+            <li><strong>Neuron:</strong> A small computational unit. It takes some numbers as input, does a simple calculation, and passes the result to other neurons.</li>
+            <li><strong>Layer:</strong> Neurons are organized into layers. You have an input layer (where data enters), one or more "hidden" layers (where the magic happens), and an output layer (where the answer comes out).</li>
+            <li><strong>Weights:</strong> Each connection between neurons has a "weight". This number represents the strength of the connection. A higher weight means the signal is more important. <strong>Learning is all about adjusting these weights.</strong></li>
+        </ul>
+    </div>
+
+    <div class="analogy">
+        <strong>Analogy: A Team of Specialists</strong>
+        <p>Imagine you're trying to decide if an email is spam. A neural network is like a team of specialists organized in an assembly line (layers).</p>
+        <ul>
+            <li><strong>Input Layer:</strong> The receptionist who receives the email's raw text.</li>
+            <li><strong>First Hidden Layer:</strong> A team of junior analysts. One looks for suspicious words ("free," "winner"). Another checks the sender's address. Another looks for bad grammar. They each pass their simple finding (a number) to the next layer.</li>
+            <li><strong>Second Hidden Layer:</strong> A team of senior managers. They don't see the original email. They only see the reports from the junior analysts. One manager might notice that "the 'suspicious words' score is high AND the 'bad grammar' score is high." This combined insight is more powerful.</li>
+            <li><strong>Output Layer:</strong> The final decision-maker (a single neuron) who looks at the managers' conclusions and gives a final verdict: "Spam" or "Not Spam".</li>
+        </ul>
+        <p><strong>Why deeper is better:</strong> More layers (deeper networks) allow the network to combine simple patterns into more complex ones, just like the managers combined the analysts' simple findings.</p>
+    </div>
+
+    <p>The process of data flowing from the input layer to the output layer is called a <strong>forward pass</strong>. The network's final guess is then compared to the true answer to calculate a <strong>loss</strong>—a measure of how wrong it was.</p>
+
+    <h3>3. Training a Neural Network</h3>
+    <p>Training is the process of minimizing the loss. If the loss is high, the network is bad. We want to adjust the weights to make the loss as low as possible.</p>
+
+    <div class="analogy">
+        <strong>Analogy: The Mountain Climber</strong>
+        <p>Imagine you're on a mountain in thick fog, and your goal is to get to the lowest point in the valley (the lowest loss).</p>
+        <ul>
+            <li><strong>Loss Function:</strong> This is your altitude. Higher altitude = higher loss (bad).</li>
+            <li><strong>Gradient Descent:</strong> You can't see the whole valley, but you can feel the slope of the ground right under your feet. You take a small step in the steepest downhill direction. You repeat this over and over. This step-by-step process is called gradient descent.</li>
+            <li><strong>Backpropagation:</strong> This is the magic that lets you efficiently calculate which way is "downhill" for all the thousands of weights in your network. It's like a system of messengers that runs from the final error (your altitude) back through all the layers, telling each weight "you need to increase a bit" or "you need to decrease a lot" to lower the overall altitude.</li>
+        </ul>
+    </div>
+
+    <div class="joke">
+        <p>Why did the machine learning model break up with the traditional algorithm?</p>
+        <p>It said, "I feel like you're not learning from your mistakes. You're too set in your ways!"</p>
+    </div>
+
+    <div class="quiz">
+        <h4>Part 1 Quick Quiz!</h4>
+        <p>What is the main goal of "training" a neural network?</p>
+        <div class="option">
+            <input type="radio" id="q1a1" name="quiz1" value="a">
+            <label for="q1a1">To make the network deeper by adding more layers.</label>
+        </div>
+        <div class="option">
+            <input type="radio" id="q1a2" name="quiz1" value="b">
+            <label for="q1a2">To adjust the network's weights to minimize the loss (error).</label>
+        </div>
+        <div class="option">
+            <input type="radio" id="q1a3" name="quiz1" value="c">
+            <label for="q1a3">To process data as fast as possible in the forward pass.</label>
+        </div>
+        <button onclick="checkQuiz1()">Check Answer</button>
+        <div class="quiz-feedback" id="quiz-feedback-1" style="display: none;"></div>
+    </div>
+
+    <hr>
+
+    <h2>Part 2: Introduction to JAX</h2>
+
+    <h3>4. What is JAX?</h3>
+    <p>JAX is a Python library from Google for high-performance numerical computing. Think of it as <strong>NumPy on steroids</strong>. It gives you the familiar NumPy API but with some superpowers crucial for machine learning.</p>
+    <ul>
+        <li><strong>Automatic Differentiation:</strong> It can automatically calculate gradients (the "slope" for gradient descent) of your Python functions.</li>
+        <li><strong>Hardware Acceleration:</strong> It can run your code transparently on GPUs and TPUs with very little effort.</li>
+        <li><strong>Functional & Composable:</strong> JAX transformations like `grad`, `jit`, and `vmap` can be combined and chained together.</li>
+    </ul>
+
+    <h3>5. JAX Basics</h3>
+    <p>Let's look at the core features that make JAX so powerful.</p>
+
+    <div class="pre-section">
+        <strong>Key Term: Pure Functions.</strong> JAX transformations work best on "pure" functions. A pure function's output depends *only* on its inputs, and it has no side effects (like modifying a global variable or printing to the screen).
+    </div>
+
+    <h4>`jax.numpy` vs `numpy`</h4>
+    <p>JAX provides its own version of NumPy. For the most part, you can use it just like you would use the original `numpy`.</p>
+    <div class="code-block">
+        <div class="code-explanation">
+            <p>First, we import `jax.numpy` as `jnp`.</p>
+        </div>
+        <pre><code class="language-python">import jax.numpy as jnp
+
+# Create a JAX array
+x = jnp.array([1.0, 2.0, 3.0])
+print(x)</code></pre>
+        <div class="output-block">[1. 2. 3.]</div>
+    </div>
+    
+    <h4>Autograd with `jax.grad()`</h4>
+    <p>This is JAX's killer feature. It can take a function and give you back a new function that computes its gradient.</p>
+    <div class="analogy">
+        <strong>Analogy: The Slope Finder</strong>
+        <p>Imagine your Python function `f(x) = x**2` describes a simple curve (a parabola). `jax.grad(f)` is like a magical machine that, for any point `x` you give it, instantly tells you the slope of the curve at that exact point.</p>
+    </div>
+    <div class="code-block">
+        <div class="code-explanation">
+            <p>1. We define a simple Python function `sum_of_squares`.</p>
+            <p>2. We use `jax.grad()` to create a new function, `grad_fn`, which will compute the gradient of `sum_of_squares`.</p>
+            <p>3. We call `grad_fn` with some input values. The output is the gradient (the derivative) at that input. For `x**2`, the derivative is `2*x`.</p>
+        </div>
+        <pre><code class="language-python">import jax
+
+def sum_of_squares(x):
+  return jnp.sum(x**2)
+
+# Get the gradient function
+grad_fn = jax.grad(sum_of_squares)
+
+# Calculate the gradient at a specific point
+x = jnp.array([1.0, 2.0, 3.0])
+gradient = grad_fn(x)
+
+print(f"Function output: {sum_of_squares(x)}")
+print(f"Gradient output: {gradient}")</code></pre>
+        <div class="output-block">Function output: 14.0
+Gradient output: [2. 4. 6.]</div>
+    </div>
+
+    <h4>JIT Compilation with `jax.jit()`</h4>
+    <p>JIT stands for Just-In-Time compilation. `jax.jit` takes a Python function and compiles it into highly optimized machine code that can run much faster, especially on accelerators like GPUs.</p>
+    <div class="code-block">
+        <div class="code-explanation">
+            <p>We take our `sum_of_squares` function and wrap it with `jax.jit`. The first time you call `jitted_fn`, JAX will compile it. Subsequent calls will be much faster because they run the compiled code.</p>
+        </div>
+        <pre><code class="language-python"># Create a jitted version of our function
+jitted_fn = jax.jit(sum_of_squares)
+
+# The first run is slower due to compilation
+print(jitted_fn(x))
+
+# Subsequent runs are much faster
+# (In a real script, you'd time this with %timeit)
+print(jitted_fn(x)) 
+</code></pre>
+        <div class="output-block">14.0
+14.0</div>
+    </div>
+
+    <h4>Vectorization with `jax.vmap()`</h4>
+    <p>`vmap` is for "vectorizing map". It lets you take a function designed to work on a single example and automatically make it work on a whole batch of examples, without you having to write a loop.</p>
+     <div class="code-block">
+        <div class="code-explanation">
+            <p>1. We define a `predict` function that works on a single data point.</p>
+            <p>2. We create a batch of data (a 2D array).</p>
+            <p>3. We use `jax.vmap` to create `batched_predict`. `vmap` automatically handles running `predict` for each row in `batch_data`.</p>
+        </div>
+        <pre><code class="language-python">def predict(weights, inputs):
+  return jnp.dot(weights, inputs)
+
+# A batch of 5 data points, each with 3 features
+batch_data = jnp.arange(15).reshape(5, 3)
+weights = jnp.array([0.1, 0.2, 0.3])
+
+# Create a version of predict that works on batches
+batched_predict = jax.vmap(predict, in_axes=(None, 0))
+
+# Run on the whole batch at once
+predictions = batched_predict(weights, batch_data)
+print(predictions)
+</code></pre>
+        <div class="output-block">[ 0.8  2.6  4.4  6.2  8. ]</div>
+    </div>
+
+    <div class="joke">
+        <p>Why is JAX so good at yoga?</p>
+        <p>Because it's great at functional transformations and has a flexible backend!</p>
+    </div>
+
+    <div class="quiz">
+        <h4>Part 2 Quick Quiz!</h4>
+        <p>You have a function that processes one image. To make it process a batch of 100 images efficiently without writing a `for` loop, which JAX transformation would you use?</p>
+        <div class="option">
+            <input type="radio" id="q2a1" name="quiz2" value="a">
+            <label for="q2a1">`jax.grad`</label>
+        </div>
+        <div class="option">
+            <input type="radio" id="q2a2" name="quiz2" value="b">
+            <label for="q2a2">`jax.jit`</label>
+        </div>
+        <div class="option">
+            <input type="radio" id="q2a3" name="quiz2" value="c">
+            <label for="q2a3">`jax.vmap`</label>
+        </div>
+        <button onclick="checkQuiz2()">Check Answer</button>
+        <div class="quiz-feedback" id="quiz-feedback-2" style="display: none;"></div>
+    </div>
+
+    <hr>
+
+    <h2>Part 3: Introduction to Flax</h2>
+
+    <h3>7. What is Flax?</h3>
+    <p>Flax is a high-level neural network library built on top of JAX. While you *could* build everything from scratch in JAX (man
