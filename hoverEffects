@@ -1,0 +1,2390 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hover Effects</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+       
+
+
+ body {
+            height: 100%;
+            width: 100%;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 40px;
+            padding: 50px;
+            background-color: #f0f0f0;
+            box-sizing:border-box ;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            background-color: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .title {
+            font-size: 22px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+            text-align: center; 
+        }
+        
+        .btn1, .btn2, .btn3, .btn4 {
+            margin: 0;
+            height: 50px;
+            width: 180px;
+            color: gray;
+            font-size: 18px;
+            position: relative;
+            background: black;
+            overflow: hidden;
+            z-index: 1;
+            cursor: pointer;
+            border-radius: 10px;
+            border: none;
+            transition: all 0.4s ease-in-out;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+       
+        .btn1::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 100%;
+            background-color: red;
+            border-radius: 10px 0 0 10px;
+            z-index: -1;
+            transition: width 0.4s ease-in-out;
+        }
+        .btn1::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 0;
+            height: 100%;
+            background-color: red;
+            border-radius: 0 10px 10px 0;
+            z-index: -1;
+            transition: width 0.4s ease-in-out;
+        }
+        .btn1:hover::before,
+        .btn1:hover::after {
+            width: 50%;
+        }
+        .btn1:hover {
+            color: white;
+        }
+       
+        .btn2::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 0%;
+            background-color: red;
+            border-radius: 10px 10px 0 0;
+            z-index: -1;
+            transition: height 0.4s ease-in-out;
+        }
+        .btn2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 100%;
+            height: 0;
+            background-color: red;
+            border-radius: 0 0 10px 10px;
+            z-index: -1;
+            transition: height 0.4s ease-in-out;
+        }
+        .btn2:hover::before,
+        .btn2:hover::after {
+            height: 50%;
+        }
+        .btn2:hover {
+            color: white;
+        }
+        
+        .btn3 {
+            position: relative;
+            background: #007bff; 
+            color: white;
+            overflow: hidden;
+        }
+        .btn3::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background-color: #ffc107; 
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.5s ease-out, height 0.5s ease-out;
+            z-index: -1;
+        }
+        .btn3:hover::before {
+            width: 250px; 
+            height: 250px;
+        }
+        .btn3:hover {
+            color: black; 
+        }
+        
+        .btn4 {
+            background: #28a745; 
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn4::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%; 
+            width: 100%;
+            height: 100%;
+            background-color: #dc3545; 
+            transition: left 0.4s ease-in-out;
+            z-index: -1;
+        }
+        .btn4:hover::before {
+            left: 0; 
+        }
+        
+        .img, .img2, .img3, .img-box{
+            width: 250px;
+            height: 350px;
+            border-radius: 15px;
+            position: relative;
+            z-index: 1;
+            transition: all 0.4s ease;
+            overflow: hidden;
+            border: none;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            aspect-ratio:2/3;
+        }
+        img {
+            height: 100%;
+            width: 100%;
+            object-fit: cover;
+            transition: 0.4s all ease;
+            display: block;
+        }
+       
+       
+        .img::before {
+            content: 'HELLO';
+            position: absolute;
+            top: -50%;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 8px 15px;
+            font-weight: bold;
+            z-index: 2;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.5s all ease;
+            border-radius: 5px;
+            white-space: nowrap;
+        }
+        .img::after {
+            content: 'I\'M A BIG ELEPHANT';
+            position: absolute;
+            bottom: -40%;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 8px 15px;
+            font-weight: bold;
+            justify-content: center;
+            z-index: 2;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            transition: 0.5s all ease;
+            border-radius: 5px;
+            white-space: nowrap;
+        }
+        .img:hover img {
+            transform: scale(1.1);
+        }
+        .img:hover::before {
+            top: 20px;
+        }
+        .img:hover::after {
+            bottom: 20px;
+        }
+        /* Image 2*/
+        .img2::after {
+            content: 'DISCOVER THE WILD';
+            position: absolute;
+            top: 100%;
+            left: 0;
+            color: white;
+            background-color: rgba(255,255, 255, 0.5); 
+                        padding: 20px;
+            font-weight: bold;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2;
+            text-transform: uppercase;
+            transition: 0.5s all ease;
+            width: 100%;
+            height: 100%;
+            box-sizing: border-box;
+            font-size: 20px;
+            text-align: center;
+        }
+        .img2:hover::after {
+            top: 0;
+        }
+        
+        .img3 {
+            position: relative;
+            overflow: hidden;
+        }
+        .img3 img {
+            transition: transform 0.6s ease;
+        }
+        .img3:hover img {
+            transform: scale(1.15);
+        }
+        .img3::before {
+            content: 'Ash and Pikachu ';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 15px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            font-size: 18px;
+            text-align: center;
+            transform: translateY(100%); /* Start off-screen at bottom */
+            transition: transform 0.5s ease-out;
+            z-index: 2;
+            box-sizing: border-box;
+        }
+        .img3:hover::before {
+            transform: translateY(0); 
+        }
+        
+        .get-code-btn {
+            background-color: #6c757d; 
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+        }
+        .get-code-btn:hover {
+            background-color: #5a6268;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 700px;
+            border-radius: 10px;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        .close-button {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close-button:hover,
+        .close-button:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        pre {
+            background-color: #eee;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            white-space: pre-wrap; 
+            word-break: break-all; 
+        }
+
+        
+        .navbar {
+            width: 100%; 
+            background-color: #333;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            border-radius: 10px; 
+            margin-top: 20px; 
+        }
+
+        .navbar a {
+            display: block;
+            color: #f2f2f2;
+            text-align: center;
+            padding: 14px 5px;
+            flex:1 1 120px;
+            text-decoration: none;
+            font-size: 8px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            flex-grow: 1; 
+        }
+
+        
+        .navbar a.effect-original::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: #007bff;
+            transform: scaleX(0);
+            transition: transform 0.3s ease-out;
+            transform-origin: bottom right;
+        }
+
+        .navbar a.effect-original:hover::before {
+            transform: scaleX(1);
+            transform-origin: bottom left;
+        }
+
+        .navbar a.effect-original:hover {
+            background-color: #555;
+            color: white;
+        }
+
+        
+        .navbar a.effect-grow-fade::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: #ff5733; /* Orange-red */
+            transform: scaleX(0);
+            opacity: 0;
+            transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+            transform-origin: left;
+        }
+
+        .navbar a.effect-grow-fade:hover::before {
+            transform: scaleX(1);
+            opacity: 1;
+            flex-wrap:wrap;
+        }
+
+        .navbar a.effect-grow-fade:hover {
+            color: #ff5733; 
+            
+            background-color: #444;
+        }
+
+        .navbar a.effect-text-slide {
+            overflow: hidden;
+            position: relative;
+        }
+
+        .navbar a.effect-text-slide span {
+            display: block;
+            position: relative;
+            transition: transform 0.3s ease;
+        }
+
+        .navbar a.effect-text-slide::before {
+            content: attr(data-hover-text); 
+            
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #28a745; 
+            transition: transform 0.3s ease;
+        }
+
+        .navbar a.effect-text-slide:hover span {
+            transform: translateY(-100%); 
+        }
+
+        .navbar a.effect-text-slide:hover::before {
+            transform: translateY(-100%); 
+        }
+        .navbar a.effect-text-slide:hover {
+            background-color: #555;
+        }
+
+        
+        .navbar a.effect-sweep {
+            position: relative;
+            z-index: 1;
+            color: #f2f2f2;
+            transition: color 0.3s ease-out;
+        }
+
+        .navbar a.effect-sweep::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 100%;
+            background-color: #6f42c1;             transition: width 0.3s ease-out;
+            z-index: -1;
+        }
+
+        .navbar a.effect-sweep:hover::before {
+            width: 100%;
+        }
+
+        .navbar a.effect-sweep:hover {
+            color: white; 
+        }
+
+        /* Navbar Effect 4: Border Pulse */
+        .navbar a.effect-border-pulse {
+            border: 2px solid transparent;
+            transition: border-color 0.3s ease-out, box-shadow 0.3s ease-out;
+        }
+
+        .navbar a.effect-border-pulse:hover {
+            border-color: #17a2b8; 
+            box-shadow: 0 0 10px #17a2b8; 
+            background-color: #555;
+        }
+
+        /* --- Card Flip Styles --- */
+        .flip-card-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        .flip-card {
+            background-color: transparent;
+            width: 300px;
+            height: 200px;
+            perspective: 1000px;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.8s;
+            transform-style: preserve-3d;
+            border-radius: 15px;
+        }
+
+        .flip-card:hover .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden; /* Safari */
+            backface-visibility: hidden;
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .flip-card-front {
+            background-color: #f8f9fa; 
+            color: black;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .flip-card-back {
+            background-color: #6c757d;
+            color: white;
+            transform: rotateY(180deg);
+            font-size: 18px;
+        }
+        .flip-card-back p {
+            margin: 0;
+            text-align: center;
+        }
+
+        /* --- Profile Card Styles --- */
+        .profile-card {
+            width: 280px;
+            background-color: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            position: relative;
+            text-align: center;
+            transition: transform 0.3s ease-in-out;
+            padding-bottom: 15px; 
+        }
+
+        .profile-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 15px 15px 0 0;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .profile-info {
+            padding: 15px;
+        }
+
+        .profile-info h3 {
+            margin: 10px 0 5px;
+            color: #333;
+            font-size: 20px;
+        }
+
+        .profile-info p {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        /* Profile Card 1: Overlay & Button Fade In */
+        .profile-card.effect-overlay-button {
+            
+        }
+
+        .profile-card.effect-overlay-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+            border-radius: 15px;
+            z-index: 1;
+        }
+
+        .profile-card.effect-overlay-button .profile-overlay-btn {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+            z-index: 2;
+        }
+
+        .profile-card.effect-overlay-button:hover::before {
+            opacity: 1;
+        }
+
+        .profile-card.effect-overlay-button:hover .profile-overlay-btn {
+            opacity: 1;
+            transform: translateX(-50%) translateY(-10px); /* Slightly move up */
+        }
+
+        
+        .profile-card.effect-slide-up {
+            
+        }
+
+        .profile-card.effect-slide-up .profile-content-wrapper {
+            position: relative;
+            overflow: hidden;
+            border-radius: 15px 15px 0 0;
+        }
+
+        .profile-card.effect-slide-up img {
+            transition: transform 0.4s ease;
+        }
+
+        .profile-card.effect-slide-up .profile-bio {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.95);
+            transform: translateY(100%); /* Start hidden below */
+            transition: transform 0.4s ease;
+            padding: 15px;
+            box-sizing: border-box;
+            color: #333;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        .profile-card.effect-slide-up:hover img {
+            transform: scale(1.05); /* Gentle zoom */
+        }
+
+        .profile-card.effect-slide-up:hover .profile-bio {
+            transform: translateY(0); 
+        }
+
+        /* Profile Card 3: Border Glow & Rotate */
+        .profile-card.effect-border-glow {
+            border: 3px solid transparent; /* Initial transparent border */
+            transition: border-color 0.4s ease-in-out, transform 0.4s ease-in-out, box-shadow 0.4s ease-in-out;
+        }
+
+        .profile-card.effect-border-glow img {
+            transition: transform 0.4s ease-in-out;
+        }
+
+        .profile-card.effect-border-glow:hover {
+            border-color: #28a745; 
+            box-shadow: 0 8px 20px rgba(40, 167, 69, 0.4); 
+            transform: translateY(-5px); 
+        }
+
+        .profile-card.effect-border-glow:hover img {
+            transform: rotateZ(2deg) scale(1.02); 
+        }
+
+        /* Profile Card 4: Zoom & Social Icons */
+        .profile-card.effect-zoom-social {
+            
+            padding-bottom: 0; 
+        }
+        .profile-card.effect-zoom-social img {
+            transition: transform 0.4s ease;
+        }
+
+        .profile-card.effect-zoom-social .social-icons {
+            position: absolute;
+            bottom: 10px; 
+            
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.4s ease, transform 0.4s ease;
+            z-index: 2;
+        }
+
+        .profile-card.effect-zoom-social .social-icons a {
+            color: white;
+            background-color: #555;
+            padding: 8px;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+            font-size: 18px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .profile-card.effect-zoom-social .social-icons a:hover {
+            background-color: #007bff;
+            transform: scale(1.1);
+        }
+
+        .profile-card.effect-zoom-social:hover img {
+            transform: scale(1.1);
+        }
+
+        .profile-card.effect-zoom-social:hover .social-icons {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        
+/*@media (max-width: 600px) {
+    .btn1, .btn2, .btn3, .btn4 {
+        width: 100%;
+        max-width: 90vw;
+        font-size: 16px;
+    }
+
+    .img, .img2, .img3 {
+        width: 100%;
+        max-width: 90vw;
+        height: auto;
+    }
+
+    .flip-card {
+        width: 100%;
+        max-width: 90vw;
+        height: auto;
+        aspect-ratio: 3 / 2;
+    }
+
+    .navbar a {
+        font-size: 14px;
+        padding: 10px 5px;
+    }
+
+    .title {
+        font-size: 18px;
+        text-align: center;
+    }
+
+    .container {
+        width: 100%;
+        max-width: 95vw;
+        padding: 15px;
+    }
+}*/
+
+.pro {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        .card:hover{
+    border:5px solid white;
+}
+
+        .pro img {
+            width: 100%;
+            height: 100%;
+            object-fit:cover;
+            transition: transform 0.6s ease-in-out;
+            display: block;
+        }
+
+        .txt1 {
+            position: absolute;
+            top: 5px;
+            left: 15px;
+            color: white;
+            font-size: 20px;
+            opacity: 0;
+            transition:opacity 0.5s ease,transform 1.5s ease;;
+            font-weight:100;
+            font-weight:bold;
+        }
+
+        .txt2 {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            text-align: center;
+            color: white;
+            font-size: 18px;
+            opacity: 0;
+            transition:opacity 0.5s ease,transform 1s ease;
+        }
+      /*  .txt3 {
+    position: absolute;
+    font-size:1rem; 
+    bottom:15%;
+    right: 60%;
+    padding:5px;
+    border-radius:10px;
+    background-color:white;
+    text-transform:uppercase ;
+    text-decoration:none;
+    border:2px solid white;
+    transform: translate(30%, -50%) rotate(270deg);
+   border:none;
+    color: black;
+    opacity: 0;
+    transition: opacity 0.7s ease;
+}*/
+.pro{
+    width: 80vw;
+            max-width: 250px;
+            height: auto;
+            aspect-ratio: 2 / 3;
+            position: relative;
+            border-radius: 15px;
+            overflow: hidden;
+          box-shadow: 0 25px 25px rgba(0, 1, 0, 0.15);
+          border: 0px solid transparent;
+          transition:border 0.4s ease , transform 0.6s ease-in-out;
+}
+
+        .pro:hover img {
+            transform: scale(1.5) translate(10px, 20px);
+            
+        }
+        
+
+.container1{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            background-color: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        
+    
+
+        .pro:hover .txt1,
+        .pro:hover .txt2,
+        .pro:hover .txt3 {
+            opacity:1;
+        }
+        
+
+
+
+.btn5 {
+    position: relative;
+    background: black;
+    color: white;
+    overflow: hidden;
+    border: none;
+    height: 50px;
+    width: 180px;
+    font-size: 18px;
+    border-radius: 10px;
+    transition: color 0.4s ease-in-out;
+    z-index: 1;
+}
+
+.btn5::before {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 200%;
+    height: 200%;
+    background-color: rgba(0, 0, 0, 0.6);
+    transform: rotate(-45deg);
+    transition: 0.4s ease-in-out;
+    z-index: 0;
+}
+
+.btn5:hover::before {
+    top: -50%;
+    left: -50%;
+}
+
+.btn5:hover {
+    color: #fff;
+}
+
+.btn5 span {
+    position: relative;
+    z-index: 1;
+}
+
+.img5 {
+    position: relative;
+    width: 250px;
+    height: 350px;
+    overflow: hidden;
+    border-radius: 15px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    will-change: filter;
+    
+}
+.
+
+.img5::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.3);
+    transition: opacity 0.4s ease;
+    z-index: 1;
+}
+
+.img5:hover::before {
+    opacity: 0;
+    
+}
+#in:hover{
+    transform: scale(2.1);
+}
+
+.img5 img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.img5::after {
+    content: "Welcome to India";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color:rgba(255, 255, 255, 0.5);;
+    color: black;
+    font-weight:bold;
+    padding: 8px 15px;
+    border-radius: 8px;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    z-index: 2;
+}
+
+.img5:hover::after {
+    opacity: 1;
+    
+}
+
+
+
+
+.shiny-img-wrapper {
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  border-radius: 12px; 
+}
+
+.shiny-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  transition: transform 0.3s ease;
+  
+}
+
+.shiny-img-wrapper::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -75%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.6) 50%,
+    rgba(255, 255, 255, 0.1) 100%
+  );
+  transform: skewX(-25deg);
+animation: shine2 1s ease backwards;
+}
+
+.shiny-img-wrapper:hover::before {
+  animation: shine 1s ease forwards;
+}
+
+@keyframes shine {
+  0% {
+    left: -75%;
+  }
+  100% {
+    left: 125%;
+  }
+}
+@keyframes shine2 {
+  0% {
+    left: 125%;
+  }
+  100% {
+    left: -75%;
+  }
+}
+
+    </style>
+</head>
+
+<body>
+    <div class="container" style="width: 90%;">
+        <div class="title">Navbar Hover Effects</div>
+        <div class="navbar" style="width: 100%;">
+            <a href="#home" class="effect-original">Home</a>
+            <a href="#about" class="effect-grow-fade">About</a>
+            <a href="#services" class="effect-text-slide" data-hover-text="Explore"><span>Services</span></a>
+            <a href="#contact" class="effect-sweep">Contact</a>
+            <a href="#products" class="effect-border-pulse">Products</a>
+            <a href="#blog" class="effect-grow-fade">Blog</a>
+        </div>
+        <button class="get-code-btn" onclick="showCode('navbar-effects')">Get Navbar Code</button>
+    </div>
+
+    <div style="padding-top: 20px; width: 100%; display: flex; flex-wrap: wrap; justify-content: center; gap: 40px;">
+        <div class="container">
+            <div class="title">Button Hover 1: Center Reveal</div>
+            
+            <button class="btn1">Hover Me!</button>
+            <button class="get-code-btn" onclick="showCode('btn1')">Get Code</button>
+            
+        </div>
+        
+        <div class ="container">
+        
+        <div class="title">Button Hover 2</div>
+<button class="btn5">Hover me!</button>
+
+   <button class="get-code-btn" onclick="showCode('btn9')">Get Code</button>
+   </div>
+        <div class="container">
+            <div class="title">Button Hover 3: Top/Bottom Reveal</div>
+            <button class="btn2">Hover Me!</button>
+            <button class="get-code-btn" onclick="showCode('btn2')">Get Code</button>
+        </div>
+        <div class="container">
+            <div class="title">Button Hover 4: Circle Grow</div>
+            <button class="btn3">Hover Me!</button>
+            <button class="get-code-btn" onclick="showCode('btn3')">Get Code</button>
+        </div>
+        <div class="container">
+            <div class="title">Button Hover 5: Slide from Left</div>
+            <button class="btn4">Hover Me!</button>
+            <button class="get-code-btn" onclick="showCode('btn4')">Get Code</button>
+        </div>
+        <div class="container">
+            <div class="title">Image Hover 1: Scale & Text Pop</div>
+            <div class="img">
+                <img id="img1" src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/African_Bush_Elephant.jpg/1200px-African_Bush_Elephant.jpg" alt="African Bush Elephant">
+            </div>
+            <button class="get-code-btn" onclick="showCode('img1')">Get Code</button>
+        </div>
+        <div class="container">
+            <div class="title">Image Hover 2: Full Overlay</div>
+            <div class="img2">
+                <img src="https://images.unsplash.com/photo-1541351612582-8e104069fcf9?q=80&w=764&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="wild">
+            </div>
+            <button class="get-code-btn" onclick="showCode('img2')">Get Code</button>
+        </div>
+        <div class="container">
+            <div class="title">Image Hover 3: Zoom & Caption</div>
+            <div class="img3">
+                <img src="https://i.pinimg.com/1200x/46/28/a8/4628a84fdc5f15b465d6ce29191484cb.jpg" alt="African Bush Elephant">
+            </div>
+            <button class="get-code-btn" onclick="showCode('img3')">Get Code</button>
+        </div>
+
+<div class ="container">
+<!-- 🔹 Image Hover 5: Grayscale to Color + Text Pop -->
+<div class="title">Image Hover 4: More Zoom</div>
+<div class="img5">
+
+  <img id ="in" src="https://images.unsplash.com/photo-1524613032530-449a5d94c285?q=80&w=735&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Taj mahal">
+</div>
+    </div>
+
+        <div class="container">
+            <div class="title">Card Flip 1</div>
+            <div class="flip-card">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front">
+                        <img src ="https://i.pinimg.com/736x/c2/36/6f/c2366f664aa9590ccfcbdc753fd3639c.jpg" alt="pikachuuuuu">
+                    </div>
+                    <div class="flip-card-back">
+                    <img src="https://i.pinimg.com/1200x/12/93/16/12931680f5da73cc6b4503a227d44981.jpg">
+                    </div>
+                </div>
+            </div>
+            <button class="get-code-btn" onclick="showCode('flipCard')">Get Code</button>
+        </div>
+
+        <div class="container">
+            <div class="title">Card Flip 2</div>
+            <div class="flip-card">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front">
+                    <img src ="https://static-cdn.jtvnw.net/jtv_user_pictures/aebf4d51-58c4-44ff-9878-5a7ca6cdac39-profile_banner-480.png" alt ="change img url">
+            
+                    </div>
+                    <div class="flip-card-back">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQtUBS9BGJudiqZKWaAxZP74pwOmftfDfC--em_-JAarQ&s        ">
+                        <!--<p>A detailed description or more content goes here.</p>
+                        <p>Explore more!</p>-->
+                    </div>
+                </div>
+            </div>
+            <button class="get-code-btn" onclick="showCode('flipCard')">Get Code</button>
+        </div>
+
+        <div class="container">
+            <div class="title">Profile Card 1: Overlay & Button Fade</div>
+            <div class="profile-card effect-overlay-button">
+                <img src="https://i.pinimg.com/736x/7a/13/40/7a13407cd778b9da0a443eff81077688.jpg" alt="Profile Picture">
+                <div class="profile-info">
+                    <h3>Squirtle</h3>
+                    <p>Web Developer</p>
+                </div>
+                <button class="profile-overlay-btn">View Profile</button>
+            </div>
+            <button class="get-code-btn" onclick="showCode('profileCard1')">Get Code</button>
+        </div>
+
+        <div class="container">
+            <div class="title">Profile Card 2: Slide Up Info</div>
+            <div class="profile-card effect-slide-up">
+                <div class="profile-content-wrapper">
+                    <img src="https://i.pinimg.com/736x/ce/ab/f8/ceabf870fd7284d852457f2f42cf80e5.jpg" alt="Profile Picture">
+                    <div class="profile-bio">
+                        <h4>About Me</h4>
+                        <p>
+Passionate, creative, and reliable individual focused on growth and learning.</p>
+                    </div>
+                </div>
+                <div class="profile-info">
+                    <h3>Squirtle</h3>
+                    
+                    <p>UI/UX Designer's</p>
+                </div>
+            </div>
+            <button class="get-code-btn" onclick="showCode('profileCard2')">Get Code</button>
+        </div>
+
+        <div class="container">
+            <div class="title">Profile Card 3: Border Glow & Rotate</div>
+            <div class="profile-card effect-border-glow">
+                <img src="https://i.pinimg.com/736x/1b/f7/3e/1bf73e754a1b60fc3150e3308b41351c.jpg" alt="Profile Picture">
+                <div class="profile-info">
+                    <h3>Squrtle</h3>
+                    <p>Graphic Artist</p>
+                </div>
+            </div>
+            <button class="get-code-btn" onclick="showCode('profileCard3')">Get Code</button>
+        </div>
+
+        <div class="container">
+            <div class="title">Profile Card 4: Zoom & Social Icons</div>
+            <div class="profile-card effect-zoom-social">
+                <img src="https://i.pinimg.com/1200x/48/a6/82/48a682cad9c3c216d70378611b68ef79.jpg" alt="Profile Picture">
+                <div class="profile-info">
+                    <h3>Squirtle</h3>
+                    <p>Marketing Specialist</p>
+                </div>
+                <div class="social-icons">
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+            <button class="get-code-btn" onclick="showCode('profileCard4')">Get Code</button>
+        </div>
+        </div>
+
+    <div id="codeModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal()">&times;</span>
+            <h3 id="modalTitle"></h3>
+            <pre><code id="codeSnippet"></code></pre>
+        </div>
+    </div>
+    
+  
+  
+  
+    <div class="container1">
+    <div class="title">Zoom-In-Out</div>
+           <div class="pro"> 
+            <img src="https://i.pinimg.com/736x/86/90/16/8690168e00b8e7cba3b7f883ff42d207.jpg" alt="Image">
+            <p class="txt1">Greninja</p>
+  <!-- <button class="profile-overlay-btn"  id="txt3">about me</button>-->
+            <p class="txt2">Bond Greninja</p>
+   
+     
+   
+        </div>
+        <button class="get-code-btn" onclick="showCode('zoomInOut')">Get Code</button>
+    </div>
+    
+     <div class="container1">
+     <div class="title">Shiny hover effect</div>
+         <div class="shiny-img-wrapper">
+  <img src="https://i.pinimg.com/1200x/01/cc/59/01cc59c2b894b8091720c2cd444b7979.jpg" alt="Shiny Image" class="shiny-img" />
+</div>
+<button class="get-code-btn" onclick="showCode('shiny')">Get Code</button>
+      </div>
+    
+       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+   <!-- <link rel="stylesheet" href="hover.js">-->
+    <script>
+        
+
+
+
+const codeSnippets = {
+
+            'btn1': `
+<!--html-->
+<button class="btn1">Hover Me!</button>
+/*css*/
+.btn1 {
+    height: 50px;
+    width: 180px;
+    color: gray;
+    font-size: 18px;
+    position: relative;
+    background: black;
+    overflow: hidden;
+    z-index: 1;
+    cursor: pointer;
+    border-radius: 10px;
+    border: none;
+    transition: all 0.4s ease-in-out;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.btn1::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 100%;
+    background-color: red;
+    border-radius: 10px 0 0 10px;
+    z-index: -1;
+    transition: width 0.4s ease-in-out;
+}
+.btn1::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 0;
+    height: 100%;
+    background-color: red;
+    border-radius: 0 10px 10px 0;
+    z-index: -1;
+    transition: width 0.4s ease-in-out;
+}
+.btn1:hover::before,
+.btn1:hover::after {
+    width: 50%;
+}
+.btn1:hover {
+    color: white;
+}`,
+            'btn2': `
+
+<!-- HTML for Button Hover 2 -->
+<button class="btn2">Hover Me!</button>
+
+.btn2 {
+    height: 50px;
+    width: 180px;
+    color: gray;
+    font-size: 18px;
+    position: relative;
+    background: black;
+    overflow: hidden;
+    z-index: 1;
+    cursor: pointer;
+    border-radius: 10px;
+    border: none;
+    transition: all 0.4s ease-in-out;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.btn2::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 0%;
+    background-color: red;
+    border-radius: 10px 10px 0 0;
+    z-index: -1;
+    transition: height 0.4s ease-in-out;
+}
+.btn2::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 100%;
+    height: 0;
+    background-color: red;
+    border-radius: 0 0 10px 10px;
+    z-index: -1;
+    transition: height 0.4s ease-in-out;
+}
+.btn2:hover::before,
+.btn2:hover::after {
+    height: 50%;
+}
+.btn2:hover {
+    color: white;
+}`,
+            'btn3': `
+<button class="btn3">Hover Me!</button>
+.btn3 {
+    height: 50px;
+    width: 180px;
+    color: white;
+    font-size: 18px;
+    position: relative;
+    background: #007bff; 
+    overflow: hidden;
+    z-index: 1;
+    cursor: pointer;
+    border-radius: 10px;
+    border: none;
+    transition: all 0.4s ease-in-out;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.btn3::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background-color: #ffc107;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.5s ease-out, height 0.5s ease-out;
+    z-index: -1;
+}
+.btn3:hover::before {
+    width: 250px; 
+    height: 250px;
+}
+.btn3:hover {
+    color: black; 
+}`,
+            'btn4': `
+<!-- HTML for Button Hover 4 -->
+<button class="btn4">Hover Me!</button>
+.btn4 {
+    height: 50px;
+    width: 180px;
+    color: white;
+    font-size: 18px;
+    position: relative;
+    background: #28a745; 
+    overflow: hidden;
+    z-index: 1;
+    cursor: pointer;
+    border-radius: 10px;
+    border: none;
+    transition: all 0.4s ease-in-out;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.btn4::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%; 
+    width: 100%;
+    height: 100%;
+    background-color: #dc3545; 
+    transition: left 0.4s ease-in-out;
+    z-index: -1;
+}
+.btn4:hover::before {
+    left: 0; 
+}`,
+            'img1': `
+<!-- HTML for Image Hover 1 -->
+<div class="img">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/African_Bush_Elephant.jpg/1200px-African_Bush_Elephant.jpg" alt="African Bush Elephant">
+</div>
+.img {
+    width: 250px;
+    height: 350px;
+    border-radius: 15px;
+    position: relative;
+    z-index: 1;
+    transition: all 0.4s ease;
+    overflow: hidden;
+    border: none;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+.img img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    transition: 0.4s all ease;
+    display: block;
+}
+.img::before {
+    content: 'HELLO';
+    position: absolute;
+    top: -50%;
+    left: 50%;
+    transform: translateX(-50%);
+    color: white;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 8px 15px;
+    font-weight: bold;
+    z-index: 2;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.5s all ease;
+    border-radius: 5px;
+    white-space: nowrap;
+}
+.img::after {
+    content: 'I\\'M A BIG ELEPHANT';
+    position: absolute;
+    bottom: -40%;
+    left: 50%;
+    transform: translateX(-50%);
+    color: white;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 8px 15px;
+    font-weight: bold;
+    justify-content: center;
+    z-index: 2;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    transition: 0.5s all ease;
+    border-radius: 5px;
+    white-space: nowrap;
+}
+.img:hover img {
+    transform: scale(1.1);
+}
+.img:hover::before {
+    top: 20px;
+}
+.img:hover::after {
+    bottom: 20px;
+}`,
+            'img2': `
+<!-- HTML for Image Hover 2 -->
+<div class="img2">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/African_Bush_Elephant.jpg/1200px-African_Bush_Elephant.jpg" alt="African Bush Elephant">
+</div>
+.img2 {
+    width: 250px;
+    height: 350px;
+    border-radius: 15px;
+    position: relative;
+    z-index: 1;
+    transition: all 0.4s ease;
+    overflow: hidden;
+    border: none;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+.img2 img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    transition: 0.4s all ease;
+    display: block;
+}
+.img2::after {
+    content: 'DISCOVER THE WILD';
+    position: absolute;
+    top: 100%;
+    left: 0;
+    color: white;
+    background-color: rgba(0, 123, 255, 0.8); 
+    padding: 20px;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2;
+    text-transform: uppercase;
+    transition: 0.5s all ease;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    font-size: 20px;
+    text-align: center;
+}
+.img2:hover::after {
+    top: 0;
+}`,
+            'img3': `
+<!-- HTML for Image Hover 3 -->
+<div class="img3">
+  <img src="https://i.pinimg.com/1200x/46/28/a8/4628a84fdc5f15b465d6ce29191484cb.jpg" alt="Elephant">
+</div>
+.img3 {
+    width: 250px;
+    height: 350px;
+    border-radius: 15px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+.img3 img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    transition: transform 0.6s ease;
+    display: block;
+}
+.img3:hover img {
+    transform: scale(1.15);
+}
+.img3::before {
+    content: 'Majestic Creature';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 15px;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    font-size: 18px;
+    text-align: center;
+    transform: translateY(100%); 
+    transition: transform 0.5s ease-out;
+    z-index: 2;
+    box-sizing: border-box;
+}
+.img3:hover::before {
+    transform: translateY(0); 
+}`,
+            'navbar-effects': `
+<!-- HTML for Navbar Effects -->
+<nav class="navbar">
+  <a href="#home" class="effect-original">Home</a>
+  <a href="#about" class="effect-grow-fade">About</a>
+  <a href="#services" class="effect-text-slide" data-hover-text="Explore"><span>Services</span></a>
+  <a href="#contact" class="effect-sweep">Contact</a>
+  <a href="#products" class="effect-border-pulse">Products</a>
+  <a href="#blog" class="effect-grow-fade">Blog</a>
+</nav>
+/*css*/
+
+.navbar {
+    width: 100%;
+    background-color: #333;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    border-radius: 10px;
+    margin-top: 20px;
+}
+
+.navbar a {
+    display: block;
+    color: #f2f2f2;
+    text-align: center;
+    padding: 14px 20px;
+    text-decoration: none;
+    font-size: 17px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    flex-grow: 1;
+}
+
+
+.navbar a.effect-original::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background-color: #007bff;
+    transform: scaleX(0);
+    transition: transform 0.3s ease-out;
+    transform-origin: bottom right;
+}
+
+.navbar a.effect-original:hover::before {
+    transform: scaleX(1);
+    transform-origin: bottom left;
+}
+
+.navbar a.effect-original:hover {
+    background-color: #555;
+    color: white;
+}
+.navbar a.effect-grow-fade::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background-color: #ff5733; 
+    transform: scaleX(0);
+    opacity: 0;
+    transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+    transform-origin: left;
+}
+
+.navbar a.effect-grow-fade:hover::before {
+    transform: scaleX(1);
+    opacity: 1;
+}
+
+.navbar a.effect-grow-fade:hover {
+    color: #ff5733; /* Change text color */
+    background-color: #444;
+}
+
+/* Navbar Effect 2: Text Slide Up */
+/* Requires HTML: <a class="effect-text-slide" data-hover-text="Explore"><span>Services</span></a> */
+.navbar a.effect-text-slide {
+    overflow: hidden;
+    position: relative;
+}
+
+.navbar a.effect-text-slide span {
+    display: block;
+    position: relative;
+    transition: transform 0.3s ease;
+}
+
+.navbar a.effect-text-slide::before {
+    content: attr(data-hover-text);
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #28a745;
+    transition: transform 0.3s ease;
+}
+
+.navbar a.effect-text-slide:hover span {
+    transform: translateY(-100%);
+}
+
+.navbar a.effect-text-slide:hover::before {
+    transform: translateY(-100%);
+}
+.navbar a.effect-text-slide:hover {
+    background-color: #555;
+}
+
+
+.navbar a.effect-sweep {
+    position: relative;
+    z-index: 1;
+    color: #f2f2f2;
+    transition: color 0.3s ease-out;
+}
+
+.navbar a.effect-sweep::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 100%;
+    background-color: #6f42c1; 
+    transition: width 0.3s ease-out;
+    z-index: -1;
+}
+
+.navbar a.effect-sweep:hover::before {
+    width: 100%;
+}
+
+.navbar a.effect-sweep:hover {
+    color: white;
+}
+
+
+.navbar a.effect-border-pulse {
+    border: 2px solid transparent;
+    transition: border-color 0.3s ease-out, box-shadow 0.3s ease-out;
+}
+
+.navbar a.effect-border-pulse:hover {
+    border-color: #17a2b8; 
+    box-shadow: 0 0 10px #17a2b8; 
+    background-color: #555;
+}`,
+            'flipCard': `
+<!-- HTML for Flip Card --><!--
+<div class="flip-card">
+  <div class="flip-card-inner">
+    <div class="flip-card-front">Front Side</div>
+    <div class="flip-card-back">
+      <p>This is the back of the card. You can put more information here!</p>
+    </div>
+  </div>
+</div>
+
+.flip-card {
+    background-color: transparent;
+    width: 300px;
+    height: 200px;
+    perspective: 1000px; 
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.flip-card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    transition: transform 0.8s;
+    transform-style: preserve-3d;
+    border-radius: 15px;
+}
+
+.flip-card:hover .flip-card-inner {
+    transform: rotateY(180deg);
+}
+
+.flip-card-front, .flip-card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.flip-card-front {
+    background-color: #f8f9fa; 
+    color: black;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.flip-card-back {
+    background-color: #6c757d; 
+    color: white;
+    transform: rotateY(180deg);
+    font-size: 18px;
+}
+.flip-card-back p {
+    margin: 0;
+    text-align: center;
+}`,
+            'profileCard1': `
+
+<!-- HTML for Profile Card 1 --><!--
+<div class="profile-card effect-overlay-button">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/African_Bush_Elephant.jpg/1200px-African_Bush_Elephant.jpg" alt="Profile Picture">
+  <div class="profile-info">
+    <h3>Jane Doe</h3>
+    <p>Web Developer</p>
+  </div>
+  <button class="profile-overlay-btn">View Profile</button>
+</div>
+.profile-card.effect-overlay-button {
+    width: 280px;
+    background-color: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    position: relative;
+    text-align: center;
+    transition: transform 0.3s ease-in-out;
+    padding-bottom: 15px;
+}
+
+.profile-card.effect-overlay-button img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 15px 15px 0 0;
+    transition: transform 0.3s ease-in-out;
+}
+
+.profile-card.effect-overlay-button .profile-info {
+    padding: 15px;
+}
+
+.profile-card.effect-overlay-button .profile-info h3 {
+    margin: 10px 0 5px;
+    color: #333;
+    font-size: 20px;
+}
+
+.profile-card.effect-overlay-button .profile-info p {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.profile-card.effect-overlay-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+    border-radius: 15px;
+    z-index: 1;
+}
+
+.profile-card.effect-overlay-button .profile-overlay-btn {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+    z-index: 2;
+}
+
+.profile-card.effect-overlay-button:hover::before {
+    opacity: 1;
+}
+
+.profile-card.effect-overlay-button:hover .profile-overlay-btn {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-10px); 
+}`,
+            'profileCard2': `
+<!-- HTML for Profile Card 2 --><!--
+<div class="profile-card effect-slide-up">
+  <div class="profile-content-wrapper">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/African_Bush_Elephant.jpg/1200px-African_Bush_Elephant.jpg" alt="Profile Picture">
+    <div class="profile-bio">
+      <h4>About Me</h4>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+    </div>
+  </div>
+  <div class="profile-info">
+    <h3>John Smith</h3>
+    <p>UI/UX Designer</p>
+  </div>
+</div>
+.profile-card.effect-slide-up {
+    width: 280px;
+    background-color: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    position: relative;
+    text-align: center;
+    transition: transform 0.3s ease-in-out;
+    padding-bottom: 15px;
+}
+
+.profile-card.effect-slide-up .profile-content-wrapper {
+    position: relative;
+    overflow: hidden;
+    border-radius: 15px 15px 0 0;
+}
+
+.profile-card.effect-slide-up img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 15px 15px 0 0;
+    transition: transform 0.4s ease;
+}
+
+.profile-card.effect-slide-up .profile-info {
+    padding: 15px;
+}
+
+.profile-card.effect-slide-up .profile-info h3 {
+    margin: 10px 0 5px;
+    color: #333;
+    font-size: 20px;
+}
+
+.profile-card.effect-slide-up .profile-info p {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.profile-card.effect-slide-up .profile-bio {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.95);
+    transform: translateY(100%); 
+    transition: transform 0.4s ease;
+    padding: 15px;
+    box-sizing: border-box;
+    color: #333;
+    text-align: left;
+    font-size: 14px;
+}
+
+.profile-card.effect-slide-up:hover img {
+    transform: scale(1.05);
+}
+
+.profile-card.effect-slide-up:hover .profile-bio {
+    transform: translateY(0); 
+}`,
+            'profileCard3': `
+
+<!-- HTML for Profile Card 3 --><!--
+<div class="profile-card effect-border-glow">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/African_Bush_Elephant.jpg/1200px-African_Bush_Elephant.jpg" alt="Profile Picture">
+  <div class="profile-info">
+    <h3>Alice Johnson</h3>
+    <p>Graphic Artist</p>
+  </div>
+</div>
+
+.profile-card.effect-border-glow {
+    width: 280px;
+    background-color: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    position: relative;
+    text-align: center;
+    padding-bottom: 15px;
+    border: 3px solid transparent; /* Initial transparent border */
+    transition: border-color 0.4s ease-in-out, transform 0.4s ease-in-out, box-shadow 0.4s ease-in-out;
+}
+
+.profile-card.effect-border-glow img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 15px 15px 0 0;
+    transition: transform 0.4s ease-in-out;
+}
+
+.profile-card.effect-border-glow .profile-info {
+    padding: 15px;
+}
+
+.profile-card.effect-border-glow .profile-info h3 {
+    margin: 10px 0 5px;
+    color: #333;
+    font-size: 20px;
+}
+
+.profile-card.effect-border-glow .profile-info p {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.profile-card.effect-border-glow:hover {
+    border-color: #28a745; 
+    box-shadow: 0 8px 20px rgba(40, 167, 69, 0.4); 
+    transform: translateY(-5px);
+}
+
+.profile-card.effect-border-glow:hover img {
+    transform: rotateZ(2deg) scale(1.02); 
+}`,
+            'profileCard4': `
+<!-- HTML for Profile Card 4 --><!--
+<div class="profile-card effect-zoom-social">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/African_Bush_Elephant.jpg/1200px-African_Bush_Elephant.jpg" alt="Profile Picture">
+  <div class="profile-info">
+    <h3>Bob Williams</h3>
+    <p>Marketing Specialist</p>
+  </div>
+  <div class="social-icons">
+    <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+    <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+  </div>
+</div>
+
+
+.profile-card.effect-zoom-social {
+    width: 280px;
+    background-color: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    position: relative;
+    text-align: center;
+    transition: transform 0.3s ease-in-out;
+    padding-bottom: 0; 
+}
+.profile-card.effect-zoom-social img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 15px 15px 0 0;
+    transition: transform 0.4s ease;
+}
+
+.profile-card.effect-zoom-social .profile-info {
+    padding: 15px;
+}
+
+.profile-card.effect-zoom-social .profile-info h3 {
+    margin: 10px 0 5px;
+    color: #333;
+    font-size: 20px;
+}
+
+.profile-card.effect-zoom-social .profile-info p {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.profile-card.effect-zoom-social .social-icons {
+    position: absolute;
+    bottom: 10px; 
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    opacity: 0;
+    transform: translateY(20px); 
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    z-index: 2;
+}
+
+.profile-card.effect-zoom-social .social-icons a {
+    color: white;
+    background-color: #555;
+    padding: 8px;
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    font-size: 18px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.profile-card.effect-zoom-social .social-icons a:hover {
+    background-color: #007bff;
+    transform: scale(1.1);
+}
+
+.profile-card.effect-zoom-social:hover img {
+    transform: scale(1.1);
+}
+
+.profile-card.effect-zoom-social:hover .social-icons {
+    opacity: 1;
+    transform: translateY(0);
+}`,
+'zoomInOut': `
+<!-- HTML for Zoom In-Out Profile --><!--
+<div class="container1">
+  <div class="title">Zoom-In-Out</div>
+  <div class="pro">
+    <img src="https://i.pinimg.com/736x/86/90/16/8690168e00b8e7cba3b7f883ff42d207.jpg" alt="Image">
+    <p class="txt1">greninja</p>
+    <p class="txt2">Web Developer</p>
+  </div>
+</div>
+/* CSS */
+.container1 {
+    margin: 40px auto;
+    text-align: center;
+}
+.container1 .pro {
+    position: relative;
+    display: inline-block;
+}
+.container1 img {
+    width: 250px;
+    border-radius: 15px;
+    transition: transform 0.4s ease-in-out;
+}
+.container1 .txt1,
+.container1 .txt2 {
+    margin-top: 8px;
+    font-size: 16px;
+    font-weight: bold;
+}
+.container1 img:hover {
+    transform: scale(1.1);
+}`,
+
+'btn9': `
+<button class="btn5">Diagonal Sweep</button>
+.btn5 {
+    position: relative;
+    background: black;
+    color: white;
+    overflow: hidden;
+    border: none;
+    height: 50px;
+    width: 180px;
+    font-size: 18px;
+    border-radius: 10px;
+    transition: color 0.4s ease-in-out;
+    z-index: 1;
+}
+
+.btn5::before {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 200%;
+    height: 200%;
+    background-color: rgba(0, 0, 0, 0.6);
+    transform: rotate(-45deg);
+    transition: 0.4s ease-in-out;
+    z-index: 0;
+}
+
+.btn5:hover::before {
+    top: -50%;
+    left: -50%;
+}
+
+.btn5:hover {
+    color: #fff;
+}
+
+.btn5 span {
+    position: relative;
+    z-index: 1;
+}
+
+.img5 {
+    position: relative;
+    width: 250px;
+    height: 350px;
+    overflow: hidden;
+    border-radius: 15px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    will-change: filter;
+    
+}
+.
+
+.img5::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.3);
+    transition: opacity 0.4s ease;
+    z-index: 1;
+}
+
+.img5:hover::before {
+    opacity: 0;
+    
+}
+#in:hover{
+    transform: scale(2.1);
+}
+
+.img5 img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.img5::after {
+    content: "Welcome to India";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color:rgba(255, 255, 255, 0.5);;
+    color: white;
+    padding: 8px 15px;
+    border-radius: 8px;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    z-index: 2;
+}
+
+.img5:hover::after {
+    opacity: 1;
+    
+}`,
+
+'shiny': `
+
+<!--html-->
+ <div class="shiny-img-wrapper">
+  <img src="https://i.pinimg.com/736x/86/90/16/8690168e00b8e7cba3b7f883ff42d207.jpg" alt="Shiny Image" class="shiny-img" />
+</div>
+/*css*/
+.shiny-img-wrapper {
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  border-radius: 12px; /* optional rounded corners */
+}
+
+.shiny-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  transition: transform 0.3s ease;
+}
+
+.shiny-img-wrapper::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -75%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.6) 50%,
+    rgba(255, 255, 255, 0.1) 100%
+  );
+  transform: skewX(-25deg);
+}
+
+.shiny-img-wrapper:hover::before {
+  animation: shine 1s ease forwards;
+}
+
+@keyframes shine {
+  0% {
+    left: -75%;
+  }
+  100% {
+    left: 125%;
+  }
+}`
+
+        };
+
+        function showCode(effectId) {
+            const modal = document.getElementById('codeModal');
+            const codeSnippet = document.getElementById('codeSnippet');
+            const modalTitle = document.getElementById('modalTitle');
+
+            let title = '';
+            switch (effectId) {
+                case 'btn1': title = 'CSS for Button Hover 1 (Center Reveal)'; break;
+                case 'btn2': title = 'CSS for Button Hover 2 (Top/Bottom Reveal)'; break;
+                case 'btn3': title = 'CSS for Button Hover 3 (Circle Grow)'; break;
+                case 'btn4': title = 'CSS for Button Hover 4 (Slide from Left)'; break;
+                case 'img1': title = 'CSS for Image Hover 1 (Scale & Text Pop)'; break;
+                case 'img2': title = 'CSS for Image Hover 2 (Full Overlay)'; break;
+                case 'img3': title = 'CSS for Image Hover 3 (Zoom & Caption)'; break;
+                case 'navbar-effects': title = 'CSS for All Navbar Hover Effects'; break; 
+                case 'flipCard': title = 'CSS for Card Flip Hover Effect'; break;
+                case 'profileCard1': title = 'CSS for Profile Card 1 (Overlay & Button Fade)'; break;
+                case 'profileCard2': title = 'CSS for Profile Card 2 (Slide Up Info)'; break;
+                case 'profileCard3': title = 'CSS for Profile Card 3 (Border Glow & Rotate)'; break;
+                case 'profileCard4': title = 'CSS for Profile Card 4 (Zoom & Social Icons)'; break;
+                default: title = 'CSS Code Snippet';
+                case 'zoomInOut': title = 'CSS for Zoom In-Out Profile Card'; break;
+                
+            }
+            modalTitle.textContent = title;
+            codeSnippet.textContent = codeSnippets[effectId];
+            modal.style.display = 'flex';
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('codeModal');
+            modal.style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('codeModal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+    </script>
+</body>
+</html>
