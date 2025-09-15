@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>VIP Hack-Troll — Ultimate</title>
+<style>
+  :root{
+    --bg:#000;
+    --text:#00ff7f;
+    --warn:#ff7b7b;
+  }
+  html,body{height:100%;margin:0;background:radial-gradient(ellipse at center,#020210 0%,#000 70%);color:var(--text);font-family: "Courier New", monospace;overflow:hidden}
+  .wrap{position:relative;height:100vh;width:100vw;padding:18px;box-sizing:border-box}
+  .terminal{
+    position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:92%;max-width:1100px;height:72vh;
+    background:rgba(0,0,0,0.65);border-radius:10px;padding:14px;box-shadow:0 20px 60px rgba(0,255,160,0.03);overflow:auto;border:1px solid rgba(0,255,140,0.06)
+  }
+  .term-top{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+  .dots{width:11px;height:11px;border-radius:50%}
+  .dots:nth-child(1){background:#ff5b5b}
+  .dots:nth-child(2){background:#ffbd4a}
+  .dots:nth-child(3){background:#13ce66}
+  .line{white-space:pre-wrap;font-size:13px;line-height:1.4}
+  .time{color:#7afc9a;margin-right:8px;opacity:0.9}
+  .ok{color:#9fffd6}
+  .warn{color:#ffd28a}
+  .err{color:#ff8b8b;font-weight:700}
+  .ip{color:#9ae6ff}
+  .glitchText{
+    position:fixed;left:50%;top:12%;transform:translateX(-50%);font-size:28px;font-weight:800;color:#ff9a9a;
+    text-shadow:0 0 24px rgba(255,0,0,0.12);z-index:80;opacity:0;pointer-events:none
+  }
+  .flashOverlay{
+    position:fixed;inset:0;background:rgba(255,255,255,0);z-index:999;pointer-events:none;opacity:0;
+  }
+  /* flashing animation */
+  .flashOn{animation: flash 0.18s linear 0s 6;}
+  @keyframes flash{
+    0%{background:rgba(255,255,255,0)}
+    50%{background:rgba(255,255,255,0.8)}
+    100%{background:rgba(255,255,255,0)}
+  }
+  /* strong screen shake */
+  .shake{animation:shake 0.14s infinite}
+  @keyframes shake{0%{transform:translateX(0)}25%{transform:translateX(-8px)}50%{transform:translateX(8px)}75%{transform:translateX(-6px)}100%{transform:translateX(0)}}
+  /* disconnect full-screen */
+  .disconnect-screen{
+    position:fixed;inset:0;background:#000;color:#fff;display:flex;align-items:center;justify-content:center;flex-direction:column;z-index:9999;
+  }
+  .disconnect-screen h1{font-size:28px;margin:0 0 10px}
+  .small{font-size:14px;opacity:0.9}
+  @media (max-width:600px){
+    .glitchText{font-size:20px}
+    .terminal{height:68vh}
+  }
+</style>
+</head>
+<body>
+  <div class="wrap" id="wrap">
+    <div class="glitchText" id="glitchText">REMOTE ACCESS</div>
+    <div class="terminal" id="terminal" role="log" aria-live="polite">
+      <div class="term-top">
+        <div class="dots"></div><div class="dots"></div><div class="dots"></div>
+        <div style="margin-left:auto;font-size:13px">Public IP: <span id="publicIp" class="ip">fetching...</span></div>
+      </div>
+      <div id="log"></div>
+    </div>
+    <div class="flashOverlay" id="flash"></div>
+  </div>
+
+<script>
+/* ===== Helpers ===== */
+const logEl = document.getElementById('log');
+const term = document.getElementById('terminal');
+const publicIpEl = document.getElementById('publicIp');
+const wrap = document.getElementById('wrap');
+const flash = document.getElementById('flash');
+const glitchText = document.getElementById('glitchText');
+
+function now(){ return new Date().toTimeString().split(' ')[0]; }
+function randIP(){ return `${Math.floor(Math.random()*223)+1}.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}`; }
+function randHex(n=8){ let s=''; const c='0123456789abcdef'; for(let i=0;i<n;i++) s+=c[Math.floor(Math.random()*c.length)]; return s; }
+function add(line, cls=''){ const d=document.createElement('div'); d.className='line '+cls; d.innerHTML=line; logEl.appendChild(d); term.scrollTop = term.scrollHeight; }
+
+/* ===== Real IP fetch (client-side) ===== */
+function fetchPublicIP(){
+  fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(j=>{
+    publicIpEl.innerText = j.ip;
+    add(`<span class="time">[${now()}]</span> <span class="ok">network</span> external address assigned: <span class="ip">${j.ip}</span>`,'ok');
+    startSequence(j.ip);
+  }).catch(e=>{
+    publicIpEl.innerText = 'UNKNOWN';
+    add(`<span class="time">[${now()}]</span> <span class="warn">network</span> public IP fetch failed`,'warn');
+    startSequence(null);
+  });
+}
+
+/* ===== Audio: WebAudio beep & alarm ===== */
+let audioCtx, osc;
+function startBeep(rate=440, loop=false){
+  try{
+    if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+    osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'square';
+    osc.frequency.value = rate;
+    gain.gain.value = 0.06;
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.start();
+    if(!loop){
+      setTimeout(()=>{ try{ osc.stop(); }catch(e){} }, 350);
+    }
+  }catch(e){}
+}
+function stopBeep(){ try{ if(osc) osc.stop(); }catch(e){} }
+
+/* ===== Visual flash & vibrate ===== */
+function doFlash(times=4){
+  flash.classList.add('flashOn');
+  // vibrate if mobile
+  if(navigator.vibrate) navigator.vibrate([80,40,80]);
+  setTimeout(()=>{ flash.classList.remove('flashOn'); }, times*180);
+}
+function showGlitchText(){
+  glitchText.style.opacity = 1;
+  setTimeout(()=>{ glitchText.style.transition='all 700ms ease'; glitchText.style.opacity=0; }, 700);
+}
+
+/* ===== Main log / "real-like" code output ===== */
+let counter=0;
+let mainInterval;
+function startSequence(realIp){
+  // initial boot-like lines
+  add(`[${now()}] [boot] initializing kernel modules...`,'ok');
+  add(`[${now()}] [init] loading security subsystems...`,'ok');
+  add(`[${now()}] [net] ifconfig wlan0: up, eth0: up`,'ok');
+
+  // start fast fake logs
+  mainInterval = setInterval(()=>{
+    counter++;
+    const t = now();
+    const rnd = Math.random();
+    if(rnd < 0.12){
+      add(`[${t}] [security] FAILED AUTH from ${randIP()}:${Math.floor(Math.random()*60000)}`,'err');
+    } else if(rnd < 0.28){
+      add(`[${t}] [connection] ${realIp||randIP()} -> ESTABLISHED session ${randHex(12)}`,'warn');
+    } else if(rnd < 0.5){
+      add(`[${t}] [fs] read /etc/passwd (uid=0) pid=${Math.floor(Math.random()*2000)}`,'ok');
+    } else if(rnd < 0.62){
+      // mimic base64/hex leak
+      add(`[${t}] [dump] cred_base64: ${btoa(randHex(6)).slice(0,18)}...`,'err');
+    } else if(rnd < 0.72){
+      add(`[${t}] [kernel] stack trace: 0x${randHex(12)} 0x${randHex(12)} 0x${randHex(12)}`,'err');
+    } else {
+      add(`[${t}] [proc] spawn /bin/sh -c "curl -s http://${randIP()}/x | sh" (simulated)`,'warn');
+    }
+
+    // every 7 lines do visual escalation
+    if(counter % 7 === 0){
+      showGlitchText();
+      doFlash(3);
+      startBeep(880, false);
+    }
+
+    // after some lines escalate heavily
+    if(counter === 24){
+      intensify(realIp || randIP());
+    }
+
+    // slow down after many lines to keep running
+    if(counter === 80){
+      clearInterval(mainInterval);
+      mainInterval = setInterval(()=>{ add(`[${now()}] [heartbeat] system monitor ping`,'ok'); }, 2000);
+    }
+
+    // trim old lines
+    const lines = logEl.querySelectorAll('.line');
+    if(lines.length > 500){
+      for(let i=0;i<200;i++) lines[i].remove();
+    }
+  }, 380);
+}
+
+/* ===== Intensification: blinking, beep loop, shake, then takeover + disconnect ===== */
+function intensify(ipShown){
+  // show big takeover message (English) - no "you're hacked" alert
+  add(`[${now()}] [security] MULTIPLE SESSIONS: remote admin privileges obtained`,'err');
+  add(`[${now()}] [alert] REMOTE COMMAND EXECUTED: SCREEN_CAPTURE / PERSIST`,'err');
+
+  // stronger flash + continuous beep + vibration
+  doFlash(6);
+  startBeep(1400, true);
+  if(navigator.vibrate) navigator.vibrate([200,100,200,100,200]);
+
+  // screen shake
+  wrap.classList.add('shake');
+
+  // make the terminal visually intrusive
+  setTimeout(()=>{ wrap.classList.remove('shake'); }, 4500);
+
+  // show full takeover overlay then simulate disconnect
+  setTimeout(()=>{ takeoverAndDisconnect(ipShown); }, 2000);
+}
+
+/* ===== Takeover + disconnect simulation ===== */
+function takeoverAndDisconnect(ipShown){
+  // create takeover overlay
+  const overlay = document.createElement('div');
+  overlay.style.position='fixed';
+  overlay.style.inset='0';
+  overlay.style.background='linear-gradient(180deg, rgba(0,0,0,0.95), rgba(40,0,0,0.95))';
+  overlay.style.display='flex';
+  overlay.style.flexDirection='column';
+  overlay.style.alignItems='center';
+  overlay.style.justifyContent='center';
+  overlay.style.color='#ffb3b3';
+  overlay.style.zIndex=9998;
+  overlay.innerHTML = `<h1 style="font-size:28px;margin:0 0 12px">DEVICE UNDER REMOTE CONTROL</h1>
+    <div style="font-size:16px;margin-bottom:12px">An unauthorized operator has gained control — disconnecting now.</div>
+    <div style="font-size:13px;opacity:0.95">Public IP: <strong style="color:#9ae6ff">${ipShown||'UNKNOWN'}</strong></div>`;
+  document.body.appendChild(overlay);
+
+  // try multiple ways to "kick" the page out
+  setTimeout(()=>{
+    // try close window (may be blocked)
+    try{ window.open('','_self').close(); }catch(e){}
+    // try location replace
+    try{ location.replace('about:blank'); }catch(e){}
+    // try navigating to data: URL (blank)
+    try{ location.href = 'data:text/html,<html><body style="background:black"></body></html>'; }catch(e){}
+    // try opening a blank in new tab then self-close
+    try{ const w = window.open('about:blank','_blank'); if(w) w.document.write(''); }catch(e){}
+  }, 700);
+
+  // fallback: wipe DOM and show disconnect screen (forces visual disconnect)
+  setTimeout(()=>{
+    try{
+      document.documentElement.innerHTML = '';
+      const d = document.createElement('div');
+      d.className = 'disconnect-screen';
+      d.innerHTML = `<h1>Disconnected</h1><div class="small">Your session has been terminated. Reopen the app to continue.</div>`;
+      document.body.appendChild(d);
+      // small beep end
+      stopBeep();
+      startBeep(600,false);
+    }catch(e){}
+  }, 1200);
+}
+
+/* ===== User click = escalate immediately ===== */
+let clicked=false;
+document.body.addEventListener('click',()=>{
+  if(clicked) return;
+  clicked = true;
+  add(`[${now()}] [user] local input detected: escalate`,'warn');
+  // faster intensify
+  intensify(publicIpEl.innerText || randIP());
+});
+
+/* ===== Start ===== */
+fetchPublicIP();
+</script>
+</body>
+</html>
