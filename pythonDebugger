@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="en">
+<head> <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>PyDebug</title>   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/material-darker.min.css">
+  <style>
+    :root{--bg:#0f1720;--card:#0b1220;--accent:#7dd3fc;--muted:#94a3b8;}
+    body{font-family:Inter,system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial;margin:0;background:linear-gradient(180deg,#071022 0%, #081427 60%);color:#e6eef6;}
+    .app-header{padding:18px 22px;display:flex;align-items:center;gap:16px}
+    .brand{display:flex;align-items:center;gap:12px}
+    .logo{width:48px;height:48px;border-radius:10px;background:linear-gradient(135deg,#06b6d4,#7c3aed);display:flex;align-items:center;justify-content:center;font-weight:700}
+    .card-panel{background:rgba(7,12,20,0.6);border-radius:14px;padding:18px;border:1px solid rgba(255,255,255,0.04)}/* layout */
+.editor-area{height:56vh;min-height:320px}
+.CodeMirror{height:100%;font-size:14px;border-radius:10px}
+
+.cm-line-success{background:rgba(34,197,94,0.06) !important}
+.cm-line-error{background:rgba(239,68,68,0.08) !important}
+.gutter-error{color:#ff7b7b;font-weight:700}
+
+.output-box{height:26vh;min-height:140px;overflow:auto;padding:12px;border-radius:10px;background:linear-gradient(180deg, rgba(2,6,23,0.6), rgba(6,10,18,0.6));border:1px solid rgba(255,255,255,0.03)}
+pre{margin:0;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace}
+
+.muted{color:var(--muted)}
+.loader{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,0.12);border-top-color:var(--accent);border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+@media (max-width: 900px){
+  .editor-area{height:48vh}
+  .output-box{height:28vh}
+}
+  </style>
+</head>
+<body>
+  <div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-start mb-3 app-header">
+      <div class="brand">
+        <div class="logo">PD</div>
+        <div>
+          <div style="font-weight:700;font-size:18px">PyDebug</div>
+          <div class="muted" style="font-size:13px">My 2nd favourite language</div>
+        </div>
+      </div>
+      <div class="text-end">
+        <div id="pyStatus" class="muted">Loading...<span class="loader" id="pyLoader"></span></div>
+        <small class="muted">Here's my answer to challange of a cute 😺</small>
+      </div>
+    </div><div class="row g-3">
+  <div class="col-12 col-lg-8">
+    <div class="card-panel editor-panel">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <div class="d-flex align-items-center gap-2">
+          <strong>Editor</strong>
+          <span class="muted">🐍</span>
+        </div>
+        <div class="d-flex gap-2">
+          <button class="btn btn-sm btn-outline-light" id="formatBtn" title="Format code (autopep8 if available)">Format</button>
+          <button class="btn btn-sm btn-outline-light" id="clearBtn">🗑️</button>
+          <button class="btn btn-sm btn-primary" id="runBtn">Run</button>
+        </div>
+      </div>
+
+      <div class="editor-area" id="editorWrapper">
+        <textarea id="code" spellcheck="false"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-lg-4">
+    <div class="card-panel" style="height:100%">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <strong>🙄__watching it for 🪲🐛__🙄</strong>
+        <small class="muted">Output__Errors__Hints</small>
+      </div>
+
+      <div class="mb-2">
+        <div class="d-flex gap-2 mb-2">
+          <div class="badge bg-success">OK</div>
+          <div class="badge bg-danger">Error line</div>
+        </div>
+        <div style="font-size:13px" class="muted">Click <strong>Run</strong> to execute. Errors will be highlighted with explanation below.</div>
+      </div>
+
+      <div class="mt-3">
+        <div class="mb-2"><strong>Result</strong></div>
+        <div class="output-box" id="resultBox"><pre id="stdout">(No output yet)</pre></div>
+        <div class="mt-3"><strong>Error / Explanation</strong></div>
+        <div class="output-box" id="errorBox"><pre id="stderr" style="color:#ffb4b4">(No errors)</pre></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="mt-3 muted small">Built by <strong>CRESCENT CODER</strong>...Comment any bugs</div>
+
+  </div> <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/python/python.min.js"></script>  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/edit/matchbrackets.min.js"></script>  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/comment/comment.min.js"></script>  <!-- Pyodide -->  <script src="https://cdn.jsdelivr.net/pyodide/v0.23.4/full/pyodide.js"></script>  <script>
+    // ---------- UI ----------
+    let editor, pyodideReady = false, autopep8Available=false;
+    const runBtn = document.getElementById('runBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const formatBtn = document.getElementById('formatBtn');
+    const stdoutEl = document.getElementById('stdout');
+    const stderrEl = document.getElementById('stderr');
+    const pyStatus = document.getElementById('pyStatus');
+    const pyLoader = document.getElementById('pyLoader');
+
+    // Init CodeMirror
+    function initEditor(){
+      editor = CodeMirror.fromTextArea(document.getElementById('code'),{
+        mode: 'python',
+        lineNumbers: true,
+        indentUnit: 4,
+        matchBrackets: true,
+        theme: 'material-darker',
+        extraKeys: {"Tab": function(cm){cm.replaceSelection('    ', 'end');}}
+      });
+      editor.setSize('100%','100%');
+    }
+
+    // Highlight helpers prev error occured 2.0
+    let currentErrorLine = null;
+    function clearHighlights(){
+      const doc = editor.getDoc();
+      const lineCount = doc.lineCount();
+      for(let i=0;i<lineCount;i++){
+        editor.removeLineClass(i,'background','cm-line-success');
+        editor.removeLineClass(i,'background','cm-line-error');
+        editor.removeLineClass(i,'gutter','gutter-error');
+      }
+      currentErrorLine = null;
+    }
+    function markAllGreenExcept(errorLine){
+      const doc = editor.getDoc();
+      const lineCount = doc.lineCount();
+      for(let i=0;i<lineCount;i++){
+        if((i+1) === errorLine){
+          editor.addLineClass(i,'background','cm-line-error');
+          editor.addLineClass(i,'gutter','gutter-error');
+        } else {
+          editor.addLineClass(i,'background','cm-line-success');
+        }
+      }
+      currentErrorLine = errorLine;
+    }
+
+    // Pretty show of error message
+    function showErrorInfo(errObj){
+      if(!errObj){ stderrEl.textContent = '(No errors)'; return; }
+      const {type, message, lineno, traceback} = errObj;
+      let txt = '';
+      txt += `Type: ${type}\n`;
+      if(lineno) txt += `Line: ${lineno}\n`;
+      txt += `Message: ${message}\n\n`;
+      txt += 'Traceback (most recent call last):\n';
+      txt += traceback || '(no traceback available)';
+      stderrEl.textContent = txt;
+    }
+
+    // Initialize Pyodide & optional autopep8
+    async function initPyodide(){
+      pyStatus.textContent = 'Loading Pyodide...';
+      try{
+        self.pyodide = await loadPyodide({indexURL:'https://cdn.jsdelivr.net/pyodide/v0.23.4/full/'});
+        pyStatus.innerHTML = 'Pyodide ready';
+        pyLoader.style.display = 'none';
+        pyodideReady = true;
+
+        // prepare environment: import helpers
+        await pyodide.runPythonAsync(`
+import sys, io, traceback
+from contextlib import redirect_stdout, redirect_stderr
+`);
+        // try installing autopep8
+        try{
+          await pyodide.loadPackage('micropip');
+          await pyodide.runPythonAsync("import micropip\nawait micropip.install('autopep8')");
+          autopep8Available = true;
+          formatBtn.title = 'Format with autopep8';
+        } catch(e){
+          autopep8Available = false;
+          formatBtn.title = 'Format unavailable (autopep8 not installed)';
+        }
+
+      } catch(e){
+        pyStatus.textContent = 'Pyodide failed to load';
+        pyLoader.style.display='none';
+        console.error(e);
+      }
+    }
+
+    // Run code and capture output n errors
+    async function runCode(){
+      if(!pyodideReady){ alert('Engine not ready yet.'); return; }
+      clearHighlights();
+      stdoutEl.textContent = '(Running...)';
+      stderrEl.textContent = '(Checking...)';
+
+      const userCode = editor.getValue();
+
+      // detect syntax errors by compiling
+      let syntaxError = null;
+      try{
+        const compileCheck = `\ncode = '''${escapeForPy(userCode)}'''\ntry:\n    compile(code, '<user>', 'exec')\n    result = {'ok': True}\nexcept SyntaxError as e:\n    import traceback\n    tb = traceback.format_exc()\n    result = {'ok': False, 'type':'SyntaxError','message':str(e),'lineno':getattr(e,'lineno',None),'traceback':tb}\n`;
+        const res = await pyodide.runPythonAsync(compileCheck + '\nresult');
+        if(res && res.get('ok')===false){
+          syntaxError = {type: res.get('type'), message: res.get('message'), lineno: res.get('lineno'), traceback: res.get('traceback')};
+        }
+      } catch(e){
+        console.warn('compile check exception', e);
+      }
+
+      if(syntaxError){
+        //error colours 
+        markAllGreenExcept(syntaxError.lineno || 0);
+        stdoutEl.textContent = '(No output due to syntax error)';
+        showErrorInfo(syntaxError);
+        return;
+      }
+
+      //  stdout/stderr and traceback
+      const wrapper = `\ncode = '''${escapeForPy(userCode)}'''\nimport sys, io, traceback\nfrom contextlib import redirect_stdout, redirect_stderr\nout = io.StringIO()\nerr = io.StringIO()\ntry:\n    with redirect_stdout(out), redirect_stderr(err):\n        exec(compile(code, '<user_code>', 'exec'), globals())\n    result = {'output': out.getvalue(), 'error': None}\nexcept Exception as e:\n    tb = traceback.format_exc()\n    lineno = None\n    try:\n        # Try to extract line number from exception attributes (ValueError, ZeroDivisionError, etc.)\n        lineno = getattr(e, 'lineno', None)\n    except:\n        lineno = None\n    result = {'output': out.getvalue(), 'error': True, 'type': type(e).__name__, 'message': str(e), 'lineno': lineno, 'traceback': tb}\n\nresult`;
+
+      try{
+        const result = await pyodide.runPythonAsync(wrapper);
+        const jsRes = pyodide.toPy(result).toJs ? result.toJs() : result;
+        // rslt PyProxy convrt fields
+        let outText = jsRes.output || '';
+        const hasError = jsRes.error !== null && jsRes.error !== undefined && jsRes.error !== false;
+        if(!hasError){
+          markAllGreenExcept(-1); 
+          stdoutEl.textContent = outText || '(Execution completed with no output)';
+          stderrEl.textContent = '(No errors)';
+        } else {
+          const errObj = {type: jsRes.type || 'Error', message: jsRes.message || '', lineno: jsRes.lineno || extractLineFromTrace(jsRes.traceback), traceback: jsRes.traceback || ''};
+          const lineno = errObj.lineno || 0;
+          markAllGreenExcept(lineno);
+          stdoutEl.textContent = outText || '(No output before error)';
+          showErrorInfo(errObj);
+        }
+      } catch(e){
+        console.error('Execution error', e);
+        stdoutEl.textContent = '';
+        stderrEl.textContent = 'Internal error while running code: ' + String(e);
+      }
+    }
+
+    //Will format code using autopep8 but if its availavle only
+    async function formatCode(){
+      if(!pyodideReady){ alert('Engine not ready yet.'); return; }
+      const code = editor.getValue();
+      if(!autopep8Available){
+        alert('Formatting not available: autopep8 not installed.');
+        return;
+      }
+      try{
+        const arg = `\ncode = '''${escapeForPy(code)}'''\nimport autopep8\nformatted = autopep8.fix_code(code)\nformatted`;
+        const formatted = await pyodide.runPythonAsync(arg);
+        const fstr = (typeof formatted === 'string') ? formatted : formatted.toString();
+        editor.setValue(fstr);
+      } catch(e){
+        console.error('format error', e);
+        alert('Formatting failed: ' + e);
+      }
+    }
+    function escapeForPy(s){
+      return s.replace(/\\/g,'\\\\').replace(/'''/g,"\\'\\'\\'").replace(/\r/g,'').replace(/\n/g,'\\n');
+    }
+
+    function extractLineFromTrace(tb){
+      if(!tb) return null;
+      // Try to find File/forgot error 280
+      const m = tb.match(/File \"<user_code>\", line (\\d+)/);
+      if(m) return Number(m[1]);
+      const m2 = tb.match(/File \"<user>\", line (\\d+)/);
+      if(m2) return Number(m2[1]);
+      return null;
+    }
+
+    
+    document.addEventListener('DOMContentLoaded', async ()=>{
+      initEditor();
+      await initPyodide();
+
+      runBtn.addEventListener('click', runCode);
+      clearBtn.addEventListener('click', ()=>{ editor.setValue(''); clearHighlights(); stdoutEl.textContent='(No output yet)'; stderrEl.textContent='(No errors)'; });
+      formatBtn.addEventListener('click', formatCode);
+    });
+  </script></body>
+</html>
